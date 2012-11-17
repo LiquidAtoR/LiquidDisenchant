@@ -32,7 +32,7 @@
     {
         public override string Name { get { return "Liquid Disenchant 3.0"; } }
         public override string Author { get { return "LiquidAtoR"; } }
-        public override Version Version { get { return new Version(3,0,1,5); } }
+        public override Version Version { get { return new Version(3,0,1,6); } }
         public override bool WantButton { get { return true; } }
         public override string ButtonText { get { return "Disenchant"; } }
         private Thread deThread = null;
@@ -78,7 +78,7 @@
             10940, 10938, 10939, 10998, 10978, 11082, 11083, 11084, 11134, 11139, 11174, 11175,
             11176, 11177, 11178, 14343, 14344, 16202, 16203, 16204, 20725, 22445, 22446, 22447,
             22448, 22449, 22450, 34052, 34053, 34054, 34055, 34056, 34057, 46849, 49649, 52718,
-			52719,
+			52719, 74250,
 
             // rods
             44452,
@@ -100,6 +100,9 @@
 
             // spellstones
             41191, 41192, 41193, 41194, 41195, 41196,
+			
+			// archaeology keystones
+			52843, 63127, 63128, 64392, 64394, 64395, 64396, 64397, 79868, 79869,
         };
 
         private void DisenchantItems()
