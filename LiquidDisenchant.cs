@@ -1,4 +1,52 @@
-﻿namespace PluginLiquidDisenchant3
+﻿/*
+ * LiquidDisenchant v3.0.1.8 by LiquidAtoR
+ * Additional contributors: CarlMGregory
+ * Additional Code Supply: Hawker, FPSWare
+ *
+ * Sorry for not keeping a changelog with this plugin.
+ * Must've escaped my attention while updating.
+ *
+ * This plugin disenchants items in your inventory.
+ * It will only DE uncommon, non soulbound items!
+ * If you want it to DE other stuff read the forum for needed changes.
+ *
+ * 2013/29/06   v3.0.1.8
+ *               Unified the code to work with all languages.
+ *               Shortened waiting times, and added some more Archaeology fragments to ignore.
+ *
+ * 2012/xx/11   v3.0.1.7
+ *               Forgot what I did, haha.
+ * 2012/xx/11   v3.0.1.6
+ *               Added a few more lockboxes and enchanting mats to the ignore lists.
+ * 2012/xx/11   v3.0.1.5
+ *               Added Lockboxes to the ignore lists.
+ *              v3.0.1.4
+ *               Mixed up local copy with actual release file (local copy DE'd blue items, release should not do this).
+ *              v3.0.1.3
+ *               Another change in the API on bot/player state changed in the plugin file.
+ *              v3.0.1.2
+ *               Temporary commented out the Styx.CommonBot.LootTargeting.LootMobs because it always returns true.
+ *              v3.0.1.1
+ *               Removed the references to Styx.Combat as they have been removed from the API and caused compiler errors on startup of HB.
+ *              v3.0.0.0
+ *               Revised last bits to make it fully functional with 2.5.6187.420.
+ *              v2.5.0.1
+ *               Revised inventory checkup to exclude bankitems and added cataclysm enchanting mats to the ignore list. Compatible with 2.0.0.3895.
+ *              v2.1.0.6
+ *               Revised last bits to make it fully functional with 2.0.0.3120.
+ *              v2.0.0.5
+ *               Revised last bits to make it fully functional with 1.9.4.5.
+ *              v2.0.0.4
+ *               Revised last bits to make it fully functional with HB2.
+ *              v2.0.0.3
+ *               Ironing out some more problems with HB2.
+ *              v2.0.0.2
+ *               No more Compiler Errors.
+ *              v2.0.0.1
+ *                Initial Public Release.
+ */
+
+namespace PluginLiquidDisenchant3
 {
     using Styx;
 	using Styx.Common;
@@ -30,27 +78,39 @@
 
     public class LiquidDisenchant3 : HBPlugin
     {
-        public override string Name { get { return "Liquid Disenchant 3.0"; } }
+        public override string Name { get { return "LiquidDisenchant 3.0"; } }
         public override string Author { get { return "LiquidAtoR"; } }
-        public override Version Version { get { return new Version(3,0,1,6); } }
+        public override Version Version { get { return new Version(3,0,1,8); } }
         public override bool WantButton { get { return true; } }
         public override string ButtonText { get { return "Disenchant"; } }
         private Thread deThread = null;
-
+		private bool _init;
+		
+        public override void Initialize()
+        {
+            if (_init) return;
+            base.Initialize();
+            Logging.Write(LogLevel.Normal, Colors.DarkRed, "LiquidDisenchant 3.0 ready for use...");
+            _init = true;
+        }
+		
 		#region When NOT to disenchant
 		
         public override void Pulse()
         {
-		//Thanks FPSWare for his plugins for Hunter and Druid, code from there,
-		//Don't start disenchanting when the following things occur,
-            if (!SpellManager.HasSpell("Disenchant") ||
+		if (_init)
+			{
+			//Thanks FPSWare for his plugins for Hunter and Druid, code from there,
+			//Don't start disenchanting when the following things occur,
+            if (!SpellManager.HasSpell(13262) ||
 				Battlegrounds.IsInsideBattleground || 
 					StyxWoW.Me.IsActuallyInCombat || 
 						StyxWoW.Me.Mounted || 
 							StyxWoW.Me.IsDead || 
 								StyxWoW.Me.IsGhost)
 			{ 
-			return; 
+				return;
+				}
 			}
             DisenchantItems();
         }
@@ -102,7 +162,7 @@
             41191, 41192, 41193, 41194, 41195, 41196,
 			
 			// archaeology keystones
-			52843, 63127, 63128, 64392, 64394, 64395, 64396, 64397, 79868, 79869,
+			52843, 63127, 63128, 64392, 64394, 64395, 64396, 64397, 79868, 79869, 95373,
         };
 
         private void DisenchantItems()
@@ -136,7 +196,7 @@
 					if(deItem.BagSlot != -1)
 					{
 						Logging.Write(LogLevel.Normal, Colors.DarkRed, "[LiquidDisenchant]: {0} (Entry:{1}).", deItem.Name, deItem.Entry);
-						Lua.DoString("CastSpellByName(\"Disenchant\")");
+						SpellManager.Cast(13262);
 						StyxWoW.SleepForLagDuration();
 						Lua.DoString("UseItemByName(\"" + deItem.Name + "\")");
 						StyxWoW.SleepForLagDuration();
@@ -146,14 +206,14 @@
 							Thread.Sleep(250);
 						}
 
-                    Thread.Sleep(2500);
+                    Thread.Sleep(2000);
 
                     Stopwatch timer = new Stopwatch();
                     timer.Start();
 					
 						if (!StyxWoW.Me.IsActuallyInCombat)
 						{
-							Thread.Sleep(1500);
+							Thread.Sleep(1000);
 							alreadyDisenchanted.Add(deItem);
 						}
 					}
