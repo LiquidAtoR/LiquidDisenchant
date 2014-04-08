@@ -89,7 +89,7 @@ namespace PluginLiquidDisenchant3
         public override void Initialize()
         {
             if (_init) return;
-            base.Initialize();
+            base.OnEnable();
             Logging.Write(LogLevel.Normal, Colors.DarkRed, "LiquidDisenchant 3.0 ready for use...");
             _init = true;
         }
