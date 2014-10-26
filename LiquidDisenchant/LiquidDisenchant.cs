@@ -1,5 +1,5 @@
 ﻿/*
- * LiquidDisenchant v3.0.1.8 by LiquidAtoR
+ * LiquidDisenchant v3.0.1.9 by LiquidAtoR
  * Additional contributors: CarlMGregory
  * Additional Code Supply: Hawker, FPSWare
  *
@@ -9,6 +9,9 @@
  * This plugin disenchants items in your inventory.
  * It will only DE uncommon, non soulbound items!
  * If you want it to DE other stuff read the forum for needed changes.
+ *
+ * 2014/26/10   v3.0.1.9
+ *				Change in init function
  *
  * 2013/29/06   v3.0.1.8
  *               Unified the code to work with all languages.
@@ -80,24 +83,23 @@ namespace PluginLiquidDisenchant3
     {
         public override string Name { get { return "LiquidDisenchant 3.0"; } }
         public override string Author { get { return "LiquidAtoR"; } }
-        public override Version Version { get { return new Version(3,0,1,8); } }
+        public override Version Version { get { return new Version(3,0,1,9); } }
         public override bool WantButton { get { return true; } }
         public override string ButtonText { get { return "Disenchant"; } }
         private Thread deThread = null;
 		private bool _init;
 		
-        public override void Initialize()
-        {
-            if (_init) return;
-            base.OnEnable();
-            Logging.Write(LogLevel.Normal, Colors.DarkRed, "LiquidDisenchant 3.0 ready for use...");
-            _init = true;
-        }
-		
 		#region When NOT to disenchant
 		
         public override void Pulse()
         {
+		if (!_init)
+			{
+            base.OnEnable();
+            Logging.Write(LogLevel.Normal, Colors.DarkRed, "LiquidDisenchant 3.0 ready for use...");
+            _init = true;
+			}
+			
 		if (_init)
 			{
 			//Thanks FPSWare for his plugins for Hunter and Druid, code from there,
